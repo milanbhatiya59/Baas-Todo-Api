@@ -1,13 +1,11 @@
-import crypto from "crypto";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const adminUserSchema = new Schema(
+interface AdminUserProps extends Document {
+  email: string;
+}
+
+const adminUserSchema = new Schema<AdminUserProps>(
   {
-    fullName: {
-      type: String,
-      required: [true, "Username is required"],
-      trim: true,
-    },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -16,18 +14,11 @@ const adminUserSchema = new Schema(
       trim: true,
       index: true,
     },
-    accessKey: {
-      type: String,
-      required: true,
-    },
   },
   {
     timestamps: true,
   }
 );
 
-adminUserSchema.methods.generateAccessKey = async function () {
-  return await crypto.randomBytes(20).toString("hex");
-};
-
-export const AdminUser = mongoose.model("AdminUser", adminUserSchema);
+export const AdminUser = mongoose.model<AdminUserProps>("AdminUser", adminUserSchema);
+export { AdminUserProps };

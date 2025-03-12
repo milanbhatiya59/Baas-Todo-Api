@@ -1,6 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const todoSchema = new Schema(
+interface TodoProps extends Document {
+  userId: Schema.Types.ObjectId;
+  title: string;
+  description: string;
+  isCompleted: boolean;
+  priority: string;
+}
+
+const todoSchema = new Schema<TodoProps>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -33,4 +41,5 @@ const todoSchema = new Schema(
   }
 );
 
-export const Todo = mongoose.model("Todo", todoSchema);
+export const Todo = mongoose.model<TodoProps>("Todo", todoSchema);
+export { TodoProps };

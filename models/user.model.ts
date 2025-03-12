@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import {
   ACCESS_TOKEN_EXPIRY,
   ACCESS_TOKEN_SECRET,
@@ -8,7 +8,17 @@ import {
   REFRESH_TOKEN_SECRET,
 } from "../constants";
 
-const userSchema = new Schema(
+interface UserProps extends Document {
+  adminId: Schema.Types.ObjectId;
+  username: string;
+  password: string;
+  refreshToken?: string;
+  isPasswordCorrect: (password: string) => boolean;
+  generateAccessToken: () => string;
+  generateRefreshToken: () => string;
+}
+
+const userSchema = new Schema<UserProps>(
   {
     adminId: {
       type: Schema.Types.ObjectId,
@@ -16,14 +26,9 @@ const userSchema = new Schema(
       required: true,
       index: true,
     },
-    fullName: {
+    username: {
       type: String,
       required: [true, "Username is required"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "Email is required"],
       unique: true,
       lowercase: true,
       trim: true,
@@ -58,7 +63,7 @@ userSchema.methods.generateAccessToken = function () {
     {
       _id: this._id,
       adminId: this.adminId,
-      email: this.email,
+      username: this.username,
       role: "user",
     },
     ACCESS_TOKEN_SECRET,
@@ -81,4 +86,5 @@ userSchema.methods.generateRefreshToken = function () {
   );
 };
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model<UserProps>("User", userSchema);
+export { UserProps };
