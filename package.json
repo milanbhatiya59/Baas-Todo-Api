@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "prettier --write . && nodemon --exec tsx -r dotenv/config index.ts",
     "build": "tsc",
-    "start": "node --exec tsx -r dotenv/config dist/index.js",
+    "start": "node -r dotenv/config dist/index.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write ."
   },
